@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Tddy</RootNamespace>
+    <AssemblyName>Tddy</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Web\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+    <PackageReference Include="xunit" Version="2.5.0" />
+  </ItemGroup>
+
+</Project>
