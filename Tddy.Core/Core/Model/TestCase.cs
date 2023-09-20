@@ -34,5 +34,10 @@ namespace Tddy.Core.Model
         public List<DependencyRef> Dependencies { get; set; }
 
         public string Categories { get; set; }
+
+        public override string ToString()
+        {
+            return DisplayName?? MethodName+"("+Class?.Name+")";
+        }
     }
 }
