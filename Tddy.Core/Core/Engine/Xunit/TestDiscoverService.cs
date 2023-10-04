@@ -10,10 +10,10 @@ using Xunit.Runners;
 
 namespace Tddy.Core.Engine.Xunit
 {
-    public class TestDiscoverService : ITestDiscoverService
+    public class XunitTestDiscoverService : ITestDiscoverService
     {
         TestRunner runner;
-        public TestDiscoverService() {
+        public XunitTestDiscoverService() {
              runner = new TestRunner(Assembly.GetEntryAssembly().Location);
         }
         public List<TestCase> GetTestCases()
