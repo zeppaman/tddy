@@ -29,6 +29,6 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Push
-      run: dotnet pack --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release Tddy.Core/Tddy.Core.csproj -o . && dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k *** --skip-duplicate
+      run: dotnet pack --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release Tddy.Core/Tddy.Core.csproj -o . && dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
     - name: Tag
       run: git tag 1.0.$GITHUB_RUN_NUMBER.0 && git push origin 1.0.$GITHUB_RUN_NUMBER.0
