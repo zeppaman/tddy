@@ -1,9 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Tddy.Console;
-using Xunit;
-using Xunit.Runners;
-using Xunit.Sdk;
+﻿using Tddy.Console;
+using Tddy.Core.Engine.Xunit;
 
 Console.WriteLine("Hello, World!");
 
-TddyApp.Run(args);
+TddyApp.Run<XunitTestDiscoverService>(args);

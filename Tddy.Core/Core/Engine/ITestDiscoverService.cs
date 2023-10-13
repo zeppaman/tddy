@@ -8,11 +8,11 @@ using Tddy.Core.Model;
 namespace Xunit
 {
    
-    public interface ITestDiscoverService
+    public abstract class ITestDiscoverService
     {
 
-        public List<TestCase> GetTestCases();
-        public void Execute(TestCase selector);
+        public abstract List<TestCase> GetTestCases();
+        public abstract void Execute(TestCase selector);
 
     }
 }

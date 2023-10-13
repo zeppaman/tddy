@@ -9,38 +9,40 @@ using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
 
-namespace Tddy.Core.Engine.DI { 
-public  class TypeRegistrar : ITypeRegistrar
+namespace Tddy.Core.Engine.DI
 {
-    private readonly IServiceCollection _builder;
-
-    public TypeRegistrar(IServiceCollection builder)
+    public class TypeRegistrar : ITypeRegistrar
     {
-        _builder = builder;
-    }
+        private readonly IServiceCollection _builder;
 
-    public ITypeResolver Build()
-    {
-        return new TypeResolver(_builder.BuildServiceProvider());
-    }
-
-    public void Register(Type service, Type implementation)
-    {
-        _builder.AddSingleton(service, implementation);
-    }
-
-    public void RegisterInstance(Type service, object implementation)
-    {
-        _builder.AddSingleton(service, implementation);
-    }
-
-    public void RegisterLazy(Type service, Func<object> func)
-    {
-        if (func is null)
+        public TypeRegistrar(IServiceCollection builder)
         {
-            throw new ArgumentNullException(nameof(func));
+            _builder = builder;
         }
 
-        _builder.AddSingleton(service, (provider) => func());
+        public ITypeResolver Build()
+        {
+            return new TypeResolver(_builder.BuildServiceProvider());
+        }
+
+        public void Register(Type service, Type implementation)
+        {
+            _builder.AddSingleton(service, implementation);
+        }
+
+        public void RegisterInstance(Type service, object implementation)
+        {
+            _builder.AddSingleton(service, implementation);
+        }
+
+        public void RegisterLazy(Type service, Func<object> func)
+        {
+            if (func is null)
+            {
+                throw new ArgumentNullException(nameof(func));
+            }
+
+            _builder.AddSingleton(service, (provider) => func());
+        }
     }
 }

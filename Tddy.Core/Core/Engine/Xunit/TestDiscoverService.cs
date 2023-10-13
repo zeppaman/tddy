@@ -16,7 +16,7 @@ namespace Tddy.Core.Engine.Xunit
         public XunitTestDiscoverService() {
              runner = new TestRunner(Assembly.GetEntryAssembly().Location);
         }
-        public List<TestCase> GetTestCases()
+        public override List<TestCase> GetTestCases()
         {
             var cases = new List<TestCase>();
             var entry=Assembly.GetEntryAssembly();
@@ -48,7 +48,7 @@ namespace Tddy.Core.Engine.Xunit
             return cases;
         }
 
-        public void Execute(TestCase selector)
+        public override void Execute(TestCase selector)
         {
 
 

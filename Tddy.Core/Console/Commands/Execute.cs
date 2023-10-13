@@ -8,6 +8,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using Tddy.Core.Engine.Xunit;
 using Tddy.Core.Model;
+using Xunit;
 
 namespace Tddy.Console.Commands
 {
@@ -20,20 +21,22 @@ namespace Tddy.Console.Commands
 
     public class ExecuteInteractive : Command<ExecuteSettings>
     {
-
+        ITestDiscoverService service;
+        public ExecuteInteractive(ITestDiscoverService service) 
+        {
+            this.service = service;
+        }
         
         public override int Execute([NotNull] CommandContext context, [NotNull] ExecuteSettings settings)
         {
-            var service = new TestDiscoverService();
+            
             var testCases=service.GetTestCases();
 
             var str = "x";
 
             do
             {
-                var choices = testCases.Select((x, Index) => Index + " - " + x.MethodName).ToArray();
-
-
+                
                 var selector = AnsiConsole.Prompt(
                     new SelectionPrompt<TestCase>()
                         .Title("What's your [green]favorite fruit[/]?")
