@@ -50,11 +50,7 @@ namespace Tddy.Core.Engine.Xunit
 
         public override void Execute(TestCase selector)
         {
-
-
-           
-            runner.Start(selector);
-            
+            runner.Start(selector);            
         }
     }
 }
