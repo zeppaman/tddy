@@ -1,94 +1,87 @@
 ﻿using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tddy.Core.Model;
 using Xunit.Runners;
 
 namespace Tddy.Core.Engine.Xunit
 {
-   
-        public class TestRunner
+    public class TestRunner
+    {
+        private static readonly object ConsoleLock = new();
+
+        private static readonly ManualResetEvent Finished = new(false);
+
+        public int Result;
+
+        private readonly string _assemblyFileName;
+
+        private AssemblyRunner runner;
+
+        public TestRunner(string assemblyFileName)
         {
-            private static readonly object ConsoleLock = new();
-
-            private static readonly ManualResetEvent Finished = new(false);
-
-            public int Result;
-
-            private readonly string _assemblyFileName;
-
-        AssemblyRunner runner;
-            public TestRunner(string assemblyFileName)
-            {
-                _assemblyFileName = assemblyFileName;
-              runner = AssemblyRunner.WithoutAppDomain(_assemblyFileName);
+            _assemblyFileName = assemblyFileName;
+            runner = AssemblyRunner.WithoutAppDomain(_assemblyFileName);
         }
 
-            public int Start(TestCase test)
+        public int Start(TestCase test)
+        {
+            runner.OnDiscoveryComplete = OnDiscoveryComplete;
+            runner.OnExecutionComplete = OnExecutionComplete;
+            runner.OnTestFailed = OnTestFailed;
+            runner.OnTestSkipped = OnTestSkipped;
+            runner.TestCaseFilter = (x) =>
             {
-                
-                runner.OnDiscoveryComplete = OnDiscoveryComplete;
-                runner.OnExecutionComplete = OnExecutionComplete;
-                runner.OnTestFailed = OnTestFailed;
-                runner.OnTestSkipped = OnTestSkipped;
-                runner.TestCaseFilter = (x) =>
-                {
-                    return x.TestMethod.Method.Name==test.MethodName  ;
-                };
+                return x.TestMethod.Method.Name == test.MethodName;
+            };
 
-                AnsiConsole.WriteLine("Discovering...");
-                runner.Start();
+            AnsiConsole.WriteLine("Discovering...");
+            runner.Start();
 
-                Finished.WaitOne();
-               // Finished.Dispose();
+            Finished.WaitOne();
+            // Finished.Dispose();
 
-                return Result;
-            }
+            return Result;
+        }
 
-            private void OnDiscoveryComplete(DiscoveryCompleteInfo info)
-            {
-                lock (ConsoleLock)
+        private void OnDiscoveryComplete(DiscoveryCompleteInfo info)
+        {
+            lock (ConsoleLock)
                 AnsiConsole.WriteLine($"Running {info.TestCasesToRun} of {info.TestCasesDiscovered} tests...");
-            }
+        }
 
-            private void OnExecutionComplete(ExecutionCompleteInfo info)
-            {
-                lock (ConsoleLock)
+        private void OnExecutionComplete(ExecutionCompleteInfo info)
+        {
+            lock (ConsoleLock)
                 AnsiConsole.WriteLine($"Finished: {info.TotalTests} tests in {Math.Round(info.ExecutionTime, 3)}s ({info.TestsFailed} failed, {info.TestsSkipped} skipped)");
 
-                Finished.Set();
-            }
+            Finished.Set();
+        }
 
-            private void OnTestFailed(TestFailedInfo info)
+        private void OnTestFailed(TestFailedInfo info)
+        {
+            lock (ConsoleLock)
             {
-                lock (ConsoleLock)
-                {
-                    //AnsiConsole.ForegroundColor = ConsoleColor.Red;
+                //AnsiConsole.ForegroundColor = ConsoleColor.Red;
 
-                    AnsiConsole.WriteLine("[FAIL] {0}: {1}", info.TestDisplayName, info.ExceptionMessage);
+                AnsiConsole.WriteLine("[FAIL] {0}: {1}", info.TestDisplayName, info.ExceptionMessage);
                 if (info.ExceptionStackTrace != null)
                 {
                     AnsiConsole.WriteLine(info.ExceptionStackTrace);
                 }
 
-                   // AnsiConsole.ResetColor();
-                }
-
-                Result = 1;
+                // AnsiConsole.ResetColor();
             }
 
-            private void OnTestSkipped(TestSkippedInfo info)
+            Result = 1;
+        }
+
+        private void OnTestSkipped(TestSkippedInfo info)
+        {
+            lock (ConsoleLock)
             {
-                lock (ConsoleLock)
-                {
-                    // Console.ForegroundColor = ConsoleColor.Yellow;
-                    AnsiConsole.WriteLine("[SKIP] {0}: {1}", info.TestDisplayName, info.SkipReason);
-                   // Console.ResetColor();
-                }
+                // Console.ForegroundColor = ConsoleColor.Yellow;
+                AnsiConsole.WriteLine("[SKIP] {0}: {1}", info.TestDisplayName, info.SkipReason);
+                // Console.ResetColor();
             }
         }
-    
+    }
 }

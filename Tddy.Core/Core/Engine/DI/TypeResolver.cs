@@ -1,13 +1,8 @@
 ﻿using Spectre.Console.Cli;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tddy.Core.Engine.DI
 {
-    public   class TypeResolver : ITypeResolver, IDisposable
+    public class TypeResolver : ITypeResolver, IDisposable
     {
         private readonly IServiceProvider _provider;
 
