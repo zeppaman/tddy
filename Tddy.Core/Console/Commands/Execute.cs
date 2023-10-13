@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Spectre.Console;
+﻿using Spectre.Console;
 using Spectre.Console.Cli;
-using Tddy.Core.Engine.Xunit;
+using System.Diagnostics.CodeAnalysis;
 using Tddy.Core.Model;
+using Xunit;
 
 namespace Tddy.Console.Commands
 {
@@ -17,23 +12,23 @@ namespace Tddy.Console.Commands
         public string Project { get; set; }
     }
 
-
     public class ExecuteInteractive : Command<ExecuteSettings>
     {
+        private ITestDiscoverService service;
 
-        
+        public ExecuteInteractive(ITestDiscoverService service)
+        {
+            this.service = service;
+        }
+
         public override int Execute([NotNull] CommandContext context, [NotNull] ExecuteSettings settings)
         {
-            var service = new TestDiscoverService();
-            var testCases=service.GetTestCases();
+            var testCases = service.GetTestCases();
 
             var str = "x";
 
             do
             {
-                var choices = testCases.Select((x, Index) => Index + " - " + x.MethodName).ToArray();
-
-
                 var selector = AnsiConsole.Prompt(
                     new SelectionPrompt<TestCase>()
                         .Title("What's your [green]favorite fruit[/]?")
@@ -41,24 +36,18 @@ namespace Tddy.Console.Commands
                         .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
                         .AddChoices(testCases));
 
-
-
                 AnsiConsole.WriteLine(selector.MethodName);
 
                 do
                 {
                     service.Execute(selector);
 
-
-
                     var favorites = AnsiConsole.Ask<char>("What next [green]R for repeat[/], [blue]N for new[/], [red]X for exit[/]?");
 
                     str = new String(new char[] { favorites }).ToUpper();
                 }
                 while (str == "R");
-
             } while (str != "X");
-
 
             return 0;
         }
